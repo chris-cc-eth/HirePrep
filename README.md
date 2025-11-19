@@ -114,6 +114,16 @@ HirePrep/
 └── package.json
 ```
 
+## Security Notes
+
+This application handles sensitive information (resumes and job descriptions). Please follow these security best practices:
+
+1. **API Key Security**: Never commit your `.env.local` file or expose your OpenAI API key
+2. **Data Privacy**: The application does not store any data permanently - all processing is done in-memory
+3. **HTTPS**: Always use HTTPS in production to protect data in transit
+4. **Dependencies**: Regularly update dependencies to get security patches
+5. **Rate Limiting**: Consider implementing rate limiting to prevent API abuse
+
 ## Environment Variables
 
 | Variable | Description | Required |
