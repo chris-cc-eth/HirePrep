@@ -1,7 +1,7 @@
-# InterviewForge Implementation Summary
+# HirePrep Implementation Summary
 
 ## Project Overview
-InterviewForge is a production-ready, full-stack Next.js 14+ application that provides AI-powered interview preparation for tech roles. Users can upload their resume and a job description to receive personalized interview questions, preparation plans, and skill gap analysis.
+HirePrep is a production-ready, full-stack Next.js 14+ application that provides AI-powered interview preparation for tech roles. Users can upload their resume and a job description to receive personalized interview questions, preparation plans, and skill gap analysis.
 
 ## Technology Stack
 - **Framework**: Next.js 14.2.33 (App Router)
