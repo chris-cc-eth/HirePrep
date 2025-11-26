@@ -1,4 +1,4 @@
-# InterviewForge - AI-Powered Interview Preparation
+# HirePrep - AI-Powered Interview Preparation
 
 An intelligent interview preparation platform that generates personalized technical and behavioral interview questions based on your resume and target job description.
 
