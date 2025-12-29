@@ -33,7 +33,6 @@ const detectJobType = (
 } | null => {
   if (!text || text.length < 100) return null;
 
-  const lowerText = text.toLowerCase();
   const techScores: Map<string, number> = new Map();
 
   // Tech stack detection with context-aware weights
@@ -41,7 +40,7 @@ const detectJobType = (
     { pattern: /\b(react|react\.js|reactjs)\b/gi, skill: "React", weight: 1 },
     { pattern: /\b(node|node\.js|nodejs)\b/gi, skill: "Node.js", weight: 1 },
     { pattern: /\b(python)\b/gi, skill: "Python", weight: 1 },
-    { pattern: /\b(java)\b(?!script)/gi, skill: "Java", weight: 1 },
+    { pattern: /\bjava\b(?!\s*script)/gi, skill: "Java", weight: 1 },
     { pattern: /\b(javascript)\b/gi, skill: "JavaScript", weight: 1 },
     { pattern: /\b(typescript)\b/gi, skill: "TypeScript", weight: 1 },
     { pattern: /\b(aws|amazon web services)\b/gi, skill: "AWS", weight: 1 },
