@@ -26,9 +26,12 @@ export function QuestionCard({ question, index }: QuestionCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [copied, setCopied] = useState(false)
 
+  const keyPoints = question.keyPoints || []
+  const followUps = question.followUps || []
+
   const copyToClipboard = async () => {
-    const text = `Question ${index + 1}: ${question.question}\n\nDifficulty: ${question.difficulty}\nCategory: ${question.category}\n\nModel Answer:\n${question.modelAnswer}\n\nKey Points:\n${question.keyPoints.map(p => `- ${p}`).join('\n')}\n\nCommon Follow-ups:\n${question.followUps.map(f => `- ${f}`).join('\n')}`
-    
+    const text = `Question ${index + 1}: ${question.question}\n\nDifficulty: ${question.difficulty}\nCategory: ${question.category}\n\nModel Answer:\n${question.modelAnswer}\n\nKey Points:\n${keyPoints.map(p => `- ${p}`).join('\n')}\n\nCommon Follow-ups:\n${followUps.map(f => `- ${f}`).join('\n')}`
+
     await navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -79,7 +82,7 @@ export function QuestionCard({ question, index }: QuestionCardProps) {
           </div>
         </div>
       </CardHeader>
-      
+
       {isExpanded && (
         <CardContent className="space-y-4 pt-0">
           <div>
@@ -89,22 +92,22 @@ export function QuestionCard({ question, index }: QuestionCardProps) {
             </div>
           </div>
 
-          {question.keyPoints.length > 0 && (
+          {keyPoints.length > 0 && (
             <div>
               <h4 className="font-semibold text-sm mb-2">Key Points to Mention:</h4>
               <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                {question.keyPoints.map((point, i) => (
+                {keyPoints.map((point, i) => (
                   <li key={i}>{point}</li>
                 ))}
               </ul>
             </div>
           )}
 
-          {question.followUps.length > 0 && (
+          {followUps.length > 0 && (
             <div>
               <h4 className="font-semibold text-sm mb-2">Common Follow-up Questions:</h4>
               <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                {question.followUps.map((followUp, i) => (
+                {followUps.map((followUp, i) => (
                   <li key={i}>{followUp}</li>
                 ))}
               </ul>

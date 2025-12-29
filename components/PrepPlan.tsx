@@ -19,9 +19,13 @@ export function PrepPlan({ plan }: PrepPlanProps) {
   const [isExpanded, setIsExpanded] = useState(true)
   const [copied, setCopied] = useState(false)
 
+  const topicsToRevise = plan?.topicsToRevise || []
+  const timeline = plan?.timeline || ''
+  const resources = plan?.resources || []
+
   const copyToClipboard = async () => {
-    const text = `Preparation Plan\n\nTopics to Revise:\n${plan.topicsToRevise.map(t => `- ${t}`).join('\n')}\n\nTimeline:\n${plan.timeline}\n\nRecommended Resources:\n${plan.resources.map(r => `- ${r}`).join('\n')}`
-    
+    const text = `Preparation Plan\n\nTopics to Revise:\n${topicsToRevise.map(t => `- ${t}`).join('\n')}\n\nTimeline:\n${timeline}\n\nRecommended Resources:\n${resources.map(r => `- ${r}`).join('\n')}`
+
     await navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -52,13 +56,13 @@ export function PrepPlan({ plan }: PrepPlanProps) {
           </div>
         </div>
       </CardHeader>
-      
+
       {isExpanded && (
         <CardContent className="space-y-4">
           <div>
             <h4 className="font-semibold mb-2">Topics to Revise:</h4>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              {plan.topicsToRevise.map((topic, i) => (
+              {topicsToRevise.map((topic, i) => (
                 <li key={i}>{topic}</li>
               ))}
             </ul>
@@ -67,14 +71,14 @@ export function PrepPlan({ plan }: PrepPlanProps) {
           <div>
             <h4 className="font-semibold mb-2">Suggested Timeline:</h4>
             <div className="prose prose-sm max-w-none text-muted-foreground bg-background p-3 rounded-md">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{plan.timeline}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{timeline}</ReactMarkdown>
             </div>
           </div>
 
           <div>
             <h4 className="font-semibold mb-2">Recommended Resources:</h4>
             <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              {plan.resources.map((resource, i) => (
+              {resources.map((resource, i) => (
                 <li key={i}>{resource}</li>
               ))}
             </ul>
