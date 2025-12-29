@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import OpenAI from 'openai'
 
 export const runtime = 'edge'
+export const maxDuration = 60 // Allow up to 60 seconds
 
 interface Question {
   question: string
@@ -39,16 +40,16 @@ export async function POST(request: NextRequest) {
     const { resume, jobDescription, existingQuestions, mode } = await request.json()
 
     if (!resume || !jobDescription) {
-      return NextResponse.json(
-        { error: 'Resume and job description are required' },
-        { status: 400 }
+      return new Response(
+        JSON.stringify({ error: 'Resume and job description are required' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
       )
     }
 
     if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
-        { status: 500 }
+      return new Response(
+        JSON.stringify({ error: 'OpenAI API key not configured' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
       )
     }
 
@@ -91,7 +92,8 @@ Generate 6-10 NEW questions that are different from the existing ones.`
 
       const continueUserPrompt = `Resume:\n${resume}\n\nJob Description:\n${jobDescription}\n\n**EXISTING QUESTIONS (DO NOT REPEAT THESE):**\n${existingQuestionsText}\n\nGenerate 6-10 NEW interview questions that are COMPLETELY DIFFERENT from the existing ones. Focus on different aspects, edge cases, and advanced scenarios.`
 
-      const completion = await openai.chat.completions.create({
+      // Use streaming for continuation mode
+      const stream = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [
           { role: 'system', content: continueSystemPrompt },
@@ -99,14 +101,21 @@ Generate 6-10 NEW questions that are different from the existing ones.`
         ],
         temperature: 0.8,
         response_format: { type: 'json_object' },
+        stream: true,
       })
 
-      const responseContent = completion.choices[0].message.content
-      if (!responseContent) {
+      // Collect the streamed response
+      let fullContent = ''
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || ''
+        fullContent += content
+      }
+
+      if (!fullContent) {
         throw new Error('No response from OpenAI')
       }
 
-      const parsed = JSON.parse(responseContent)
+      const parsed = JSON.parse(fullContent)
 
       // Ensure questions array exists with defaults
       const result: ContinueResponse = {
@@ -119,7 +128,9 @@ Generate 6-10 NEW questions that are different from the existing ones.`
           followUps: q.followUps || [],
         })),
       }
-      return NextResponse.json(result)
+      return new Response(JSON.stringify(result), {
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     // Normal generation mode
@@ -175,7 +186,8 @@ Generate 12-18 diverse questions. At least 70% of technical questions MUST be di
 
     const userPrompt = `Resume:\n${resume}\n\nJob Description:\n${jobDescription}\n\nPlease analyze the job description carefully, identify ALL specific technologies and tech stacks mentioned, and generate a comprehensive interview preparation package with questions that are SPECIFIC to those technologies. Avoid generic questions - focus on the actual tech stack required for this role.`
 
-    const completion = await openai.chat.completions.create({
+    // Use streaming to avoid timeout
+    const stream = await openai.chat.completions.create({
       model: 'gpt-4o',
       messages: [
         { role: 'system', content: systemPrompt },
@@ -183,14 +195,21 @@ Generate 12-18 diverse questions. At least 70% of technical questions MUST be di
       ],
       temperature: 0.7,
       response_format: { type: 'json_object' },
+      stream: true,
     })
 
-    const responseContent = completion.choices[0].message.content
-    if (!responseContent) {
+    // Collect the streamed response
+    let fullContent = ''
+    for await (const chunk of stream) {
+      const content = chunk.choices[0]?.delta?.content || ''
+      fullContent += content
+    }
+
+    if (!fullContent) {
       throw new Error('No response from OpenAI')
     }
 
-    const parsed = JSON.parse(responseContent)
+    const parsed = JSON.parse(fullContent)
 
     // Ensure all required arrays exist with defaults
     const result: GenerateResponse = {
@@ -214,12 +233,14 @@ Generate 12-18 diverse questions. At least 70% of technical questions MUST be di
       },
     }
 
-    return NextResponse.json(result)
+    return new Response(JSON.stringify(result), {
+      headers: { 'Content-Type': 'application/json' },
+    })
   } catch (error) {
     console.error('Error generating interview prep:', error)
-    return NextResponse.json(
-      { error: 'Failed to generate interview preparation. Please try again.' },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({ error: 'Failed to generate interview preparation. Please try again.' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     )
   }
 }
