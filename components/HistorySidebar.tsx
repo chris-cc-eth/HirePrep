@@ -175,7 +175,8 @@ export function HistorySidebar({
                             {new Date(item.createdAt).toLocaleString()}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1 truncate">
-                            {item.jobDescription.slice(0, 50)}...
+                            {item.jobDescription.slice(0, 50)}
+                            {item.jobDescription.length > 50 ? '...' : ''}
                           </p>
                         </div>
                         <Button
