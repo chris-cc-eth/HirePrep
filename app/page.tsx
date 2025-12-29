@@ -428,7 +428,6 @@ export default function Home() {
                 ) : (
                   <>
                     Generate More Questions
-                    Continue Generate More Questions
                   </>
                 )}
               </Button>
