@@ -40,9 +40,22 @@ const truncateText = (text: string, maxLength: number): string => {
 };
 
 // Custom tick component for better label rendering
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomTick = (props: any) => {
-  const { payload, x, y, textAnchor, cx, cy } = props;
+interface CustomTickProps {
+  payload?: { value?: string };
+  x?: number | string;
+  y?: number | string;
+  textAnchor?: "inherit" | "start" | "middle" | "end";
+  cx?: number | string;
+  cy?: number | string;
+}
+
+const CustomTick = (props: CustomTickProps) => {
+  const { payload } = props;
+  const x = Number(props.x) || 0;
+  const y = Number(props.y) || 0;
+  const cx = Number(props.cx) || 0;
+  const cy = Number(props.cy) || 0;
+  const textAnchor = props.textAnchor;
   const text = payload?.value || "";
   const maxChars = 18;
 
