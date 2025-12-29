@@ -19,9 +19,13 @@ export function SkillGapAnalysis({ analysis }: SkillGapAnalysisProps) {
   const [isExpanded, setIsExpanded] = useState(true)
   const [copied, setCopied] = useState(false)
 
+  const strengths = analysis?.strengths || []
+  const gaps = analysis?.gaps || []
+  const recommendations = analysis?.recommendations || ''
+
   const copyToClipboard = async () => {
-    const text = `Skill Gap Analysis\n\nStrengths:\n${analysis.strengths.map(s => `✓ ${s}`).join('\n')}\n\nGaps to Address:\n${analysis.gaps.map(g => `• ${g}`).join('\n')}\n\nRecommendations:\n${analysis.recommendations}`
-    
+    const text = `Skill Gap Analysis\n\nStrengths:\n${strengths.map(s => `✓ ${s}`).join('\n')}\n\nGaps to Address:\n${gaps.map(g => `• ${g}`).join('\n')}\n\nRecommendations:\n${recommendations}`
+
     await navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -55,13 +59,13 @@ export function SkillGapAnalysis({ analysis }: SkillGapAnalysisProps) {
           </div>
         </div>
       </CardHeader>
-      
+
       {isExpanded && (
         <CardContent className="space-y-4">
           <div>
             <h4 className="font-semibold mb-2 text-green-700">✓ Your Strengths:</h4>
             <ul className="space-y-1 text-sm">
-              {analysis.strengths.map((strength, i) => (
+              {strengths.map((strength, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-green-600 mt-0.5">✓</span>
                   <span className="text-muted-foreground">{strength}</span>
@@ -73,7 +77,7 @@ export function SkillGapAnalysis({ analysis }: SkillGapAnalysisProps) {
           <div>
             <h4 className="font-semibold mb-2 text-amber-700">⚠️ Gaps to Address:</h4>
             <ul className="space-y-1 text-sm">
-              {analysis.gaps.map((gap, i) => (
+              {gaps.map((gap, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="text-amber-600 mt-0.5">•</span>
                   <span className="text-muted-foreground">{gap}</span>
@@ -85,7 +89,7 @@ export function SkillGapAnalysis({ analysis }: SkillGapAnalysisProps) {
           <div>
             <h4 className="font-semibold mb-2">💡 Recommendations:</h4>
             <div className="prose prose-sm max-w-none text-muted-foreground bg-white p-3 rounded-md">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis.recommendations}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{recommendations}</ReactMarkdown>
             </div>
           </div>
         </CardContent>
